@@ -29,7 +29,7 @@ namespace Project_Login_Client
             string jsonString = JsonSerializer.Serialize(personJson);
 
             // Send the message  
-            byte[] bytes = sendMessage(System.Text.Encoding.Unicode.GetBytes(jsonString));
+            sendMessage(System.Text.Encoding.Unicode.GetBytes(jsonString));
         }
 
         private static byte[] sendMessage(byte[] messageBytes)
@@ -49,7 +49,9 @@ namespace Project_Login_Client
                 messageBytes = new byte[bytesize]; 
 
                 stream.Read(messageBytes, 0, messageBytes.Length);
-
+                string serverMessage = cleanMessage(messageBytes);
+                Console.WriteLine(serverMessage);
+           
             }
             catch (Exception e)  
             {
@@ -58,7 +60,20 @@ namespace Project_Login_Client
 
             return messageBytes; 
         }
+        private static string cleanMessage(byte[] bytes)
+        {
+            string message = System.Text.Encoding.Unicode.GetString(bytes);
 
+            string messageToPrint = null;
+            foreach (var nullChar in message)
+            {
+                if (nullChar != '\0')
+                {
+                    messageToPrint += nullChar;
+                }
+            }
+            return messageToPrint;
+        }
     }
 
     class Person

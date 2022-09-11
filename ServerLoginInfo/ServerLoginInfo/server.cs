@@ -31,15 +31,15 @@ Started listening requests at: {0}:{1}
                 string message = null;
                 byte[] buffer = new byte[bytesize];
 
-                var sender = listener.AcceptTcpClient();
-                sender.GetStream().Read(buffer, 0, bytesize);
+                var receiver = listener.AcceptTcpClient();
+                receiver.GetStream().Read(buffer, 0, bytesize);
 
                 message = cleanMessage(buffer);
 
                 Person person = JsonConvert.DeserializeObject<Person>(message); 
 
-                byte[] bytes = System.Text.Encoding.Unicode.GetBytes("Thank you for your message, " + person.Username);
-                sender.GetStream().Write(bytes, 0, bytes.Length); 
+                byte[] bytes = System.Text.Encoding.Unicode.GetBytes("Login success, " + person.Username);
+                receiver.GetStream().Write(bytes, 0, bytes.Length); 
 
                 Console.WriteLine($"client username : {person.Username} , client password : {person.Password}");
             }
