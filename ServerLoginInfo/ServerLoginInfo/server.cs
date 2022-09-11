@@ -1,25 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net;
 using System.Net.Sockets;
+using System.Net;
 using System.Net.Mail;
 using Newtonsoft.Json;
 
-namespace Project_Login
+namespace TcpServer
 {
-    class Server
+    class Program
     {
         static void Main(string[] args)
         {
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Loopback, 4141);
-            TcpListener listener = new TcpListener(endPoint);
+            IPEndPoint ep = new IPEndPoint(IPAddress.Loopback, 4141);
+            TcpListener listener = new TcpListener(ep);
             listener.Start();
 
-            Console.WriteLine(@"Server Started /n at {0}:{1}", endPoint.Address, endPoint.Port);
+            Console.WriteLine(@"  
+===================================================
+Started listening requests at: {0}:{1}  
+===================================================",
+            ep.Address, ep.Port);
 
             while (true)
             {
@@ -33,41 +36,15 @@ namespace Project_Login
 
                 message = cleanMessage(buffer);
 
-                Person person = JsonConvert.DeserializeObject<Person>(message);
+                Person person = JsonConvert.DeserializeObject<Person>(message); 
 
-                byte[] bytes = System.Text.Encoding.Unicode.GetBytes("Your message was sent, " + person.Username);
-                sender.GetStream().Write(bytes, 0, bytes.Length);
+                byte[] bytes = System.Text.Encoding.Unicode.GetBytes("Thank you for your message, " + person.Username);
+                sender.GetStream().Write(bytes, 0, bytes.Length); 
 
-                sendEmail(person);
+                Console.WriteLine($"client username : {person.Username} , client password : {person.Password}");
             }
         }
 
-        private static void sendEmail(Person p)
-        {
-            try
-            {
-                using (SmtpClient client = new SmtpClient("<smtp-server>", 25))
-                {
-                    client.EnableSsl = true;
-                    client.Credentials = new NetworkCredential("<email-address>", "<pass>");
-
-                    client.Send(
-                        new MailMessage("<your-email>", p.Password,
-                            "Thank you for using this Services",
-                            string.Format(@"Thank you for using this Services, {0}.   
-                                We have recieved your message, '{1}'.", p.Username
-                            )
-                        )
-                    );
-
-                    Console.WriteLine("Email sent to " + p.Password);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-        }
 
         private static string cleanMessage(byte[] bytes)
         {
@@ -76,20 +53,19 @@ namespace Project_Login
             string messageToPrint = null;
             foreach (var nullChar in message)
             {
-                if (nullChar != 0)
+                if (nullChar != '\0')
                 {
                     messageToPrint += nullChar;
                 }
             }
-
             return messageToPrint;
         }
+
     }
 
     class Person
     {
         public string Username { get; set; }
         public string Password { get; set; }
-        
     }
 }
