@@ -14,10 +14,10 @@ namespace Project_Login_Client
         {
             Person person = new Person();
 
-            Console.WriteLine("Enter your name: ");
-            person.Name = Console.ReadLine();
-            Console.WriteLine("Enter your email address: ");
-            person.Email = Console.ReadLine();
+            Console.WriteLine("Enter your username: ");
+            person.Username = Console.ReadLine();
+            Console.WriteLine("Enter your password: ");
+            person.Password = Console.ReadLine();
 
             byte[] bytes = sendMessage(System.Text.Encoding.Unicode.GetBytes(person.ToJson()));
             Console.WriteLine(cleanMessage(bytes));
@@ -75,14 +75,14 @@ namespace Project_Login_Client
 
     class Person
     {
-        public string Name { get; set; }
-        public string Email { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
 
         public string ToJson()
         {
             string data = "{";
-            data += "'name': '" + Name + "',";
-            data += "'email': '" + Email + "',";
+            data += "'username': '" + Username + "',";
+            data += "'password': '" + Password + "',";
             data += "}";
             return data;
         }

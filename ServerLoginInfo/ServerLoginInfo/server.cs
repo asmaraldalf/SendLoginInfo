@@ -35,7 +35,7 @@ namespace Project_Login
 
                 Person person = JsonConvert.DeserializeObject<Person>(message);
 
-                byte[] bytes = System.Text.Encoding.Unicode.GetBytes("Your message was sent, " + person.Name);
+                byte[] bytes = System.Text.Encoding.Unicode.GetBytes("Your message was sent, " + person.Username);
                 sender.GetStream().Write(bytes, 0, bytes.Length);
 
                 sendEmail(person);
@@ -52,15 +52,15 @@ namespace Project_Login
                     client.Credentials = new NetworkCredential("<email-address>", "<pass>");
 
                     client.Send(
-                        new MailMessage("<your-email>", p.Email,
+                        new MailMessage("<your-email>", p.Password,
                             "Thank you for using this Services",
                             string.Format(@"Thank you for using this Services, {0}.   
-                                We have recieved your message, '{1}'.", p.Name
+                                We have recieved your message, '{1}'.", p.Username
                             )
                         )
                     );
 
-                    Console.WriteLine("Email sent to " + p.Email);
+                    Console.WriteLine("Email sent to " + p.Password);
                 }
             }
             catch (Exception e)
@@ -88,8 +88,8 @@ namespace Project_Login
 
     class Person
     {
-        public string Name { get; set; }
-        public string Email { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
         
     }
 }
